@@ -66,4 +66,14 @@ public class SQLCommand {
 		}
 		return null;
 	}
+	
+	public void insertI_S(int IngredientId, int SymptomId, int hospitalId, int eat, String explain) {
+		try {
+			state.executeUpdate("insert into I_S values (" + IngredientId + ", "+ SymptomId + ", " + hospitalId + ");");
+			state.executeUpdate("Update Ingredient SET eat = " + (eat+1) + " where id = " + IngredientId + ";");
+			state.executeUpdate("Update Ingredient SET explain = '" + explain + "' where id = " + IngredientId + ";");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }
