@@ -38,9 +38,9 @@ public class FirstPage extends Frame{
 				setVisible(false);
 				new doctorSelect();
 			}
-			else if(arg0.getSource() == btn1) {
+			else {
 				setVisible(false);
-				new userSelectPage();
+				new userPage();
 			}
 		}
 	}
