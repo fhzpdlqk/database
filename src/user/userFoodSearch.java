@@ -1,3 +1,4 @@
+package user;
 import java.awt.Frame;
 import java.awt.Label;
 import java.awt.List;
@@ -11,6 +12,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
+
+import main.SQLCommand;
+import model.Product;
+import model.Symptom;
 
 public class userFoodSearch extends Frame{
 	Choice kinds;
@@ -48,7 +53,7 @@ public class userFoodSearch extends Frame{
 		p.add(nameList);
 		
 		Panel p2 = new Panel();
-		next = new Button("다음");
+		next = new Button("선택");
 		p2.add(next);
 		p.add(p2);
 		

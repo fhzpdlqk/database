@@ -1,3 +1,4 @@
+package user;
 import java.awt.Frame;
 import java.awt.Panel;
 import java.awt.Button;
@@ -14,7 +15,7 @@ public class userPage extends Frame{
 		});
 		Panel p = new Panel();
 		btn1 = new Button("식품 정보 찾기");
-		btn2 = new Button("동물병원 찾기");
+		btn2 = new Button("동물 병원 찾기");
 		
 		p.add(btn1);
 		p.add(btn2);
@@ -35,8 +36,8 @@ public class userPage extends Frame{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if(arg0.getSource() == btn2) {
+				new searchHospital();
 				setVisible(false);
-				
 			}
 			else if(arg0.getSource() == btn1){
 				setVisible(false);

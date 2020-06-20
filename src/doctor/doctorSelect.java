@@ -1,3 +1,8 @@
+package doctor;
+import model.Hospital;
+import model.Ingredient;
+import model.Symptom;
+import main.SQLCommand;
 import java.awt.Frame;
 import java.awt.Label;
 import java.awt.List;
@@ -39,9 +44,9 @@ public class doctorSelect extends Frame{
 		Panel p = new Panel();
 		
 		Panel p1 = new Panel();
-		Label label = new Label("º´¿ø", Label.CENTER);
+		Label label = new Label("ë³‘ì›ëª… : ", Label.CENTER);
 		hospiter = new TextField(20);
-		hospiterSearch = new Button("°Ë»ö");
+		hospiterSearch = new Button("ê²€ìƒ‰");
 		hospiterList = new List(3,false);
 		
 		hospiterSearch.addActionListener(new EventHandler());
@@ -51,9 +56,9 @@ public class doctorSelect extends Frame{
 		p1.add(hospiterSearch);
 		
 		Panel p2 = new Panel();
-		Label label2 = new Label("Àç·á", Label.CENTER);
+		Label label2 = new Label("ì¬ë£Œëª… : ", Label.CENTER);
 		Ingredient = new TextField(20);
-		IngredientSearch = new Button("°Ë»ö");
+		IngredientSearch = new Button("ê²€ìƒ‰");
 		IngredientList = new List(3,false);
 		
 		IngredientSearch.addActionListener(new EventHandler());
@@ -63,9 +68,9 @@ public class doctorSelect extends Frame{
 		p2.add(IngredientSearch);
 		
 		Panel p3 = new Panel();
-		Label label3 = new Label("Áõ»ó", Label.CENTER);
+		Label label3 = new Label("ì¦ìƒëª… : ", Label.CENTER);
 		Symptom = new TextField(20);
-		SymptomSearch = new Button("°Ë»ö");
+		SymptomSearch = new Button("ê²€ìƒ‰");
 		SymptomList = new List(3,false);
 		
 		SymptomSearch.addActionListener(new EventHandler());
@@ -74,7 +79,7 @@ public class doctorSelect extends Frame{
 		p3.add(Symptom);
 		p3.add(SymptomSearch);
 		
-		next = new Button("´ÙÀ½");
+		next = new Button("ë‹¤ìŒ");
 		next.setSize(100,100);
 		
 		next.addActionListener(new EventHandler());
