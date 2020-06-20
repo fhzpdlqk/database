@@ -1,7 +1,11 @@
+package main;
 import java.awt.Frame;
 import java.awt.Panel;
 import java.awt.Button;
 import java.awt.event.*;
+
+import doctor.doctorSelect;
+import user.userPage;
 public class FirstPage extends Frame{
 	Button btn1;
 	Button btn2;
@@ -13,8 +17,8 @@ public class FirstPage extends Frame{
 	         }
 	    });
 		Panel p = new Panel();
-		btn1 = new Button("ì‚¬ìš©ì");
-		btn2 = new Button("ìˆ˜ì˜ì‚¬");
+		btn1 = new Button("»ç¿ëÀÚ");
+		btn2 = new Button("¼öÀÇ»ç");
 		
 		p.add(btn1);
 		p.add(btn2);

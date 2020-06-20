@@ -1,3 +1,7 @@
 eclipse.preferences.version=1
-encoding/<project>=UTF-8
+encoding//src/doctor/doctorInput.java=UTF-8
+encoding//src/doctor/doctorSelect.java=UTF-8
+encoding//src/main/SQLCommand.java=UTF-8
+encoding//src/user/showProduct.java=UTF-8
+encoding//src/user/showSymptom.java=UTF-8
 separateDerivedEncodings=true

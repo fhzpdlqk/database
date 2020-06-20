@@ -1,3 +1,4 @@
+package user;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Label;
@@ -8,6 +9,11 @@ import java.awt.TextField;
 import java.awt.Button;
 import java.awt.event.*;
 import java.util.ArrayList;
+
+import main.SQLCommand;
+import main.FirstPage;
+import model.Ingredient;
+import model.Symptom;
 
 public class showSymptom extends Frame{
 
@@ -33,7 +39,7 @@ public class showSymptom extends Frame{
 		Panel p = new Panel();
 		
 		Panel p1 = new Panel();
-		TextArea contents = new TextArea(symptom.getName()+"\n\nÀ¯¹ß Àç·á:\n", 50, 50);
+		TextArea contents = new TextArea(symptom.getName()+"\n\nå ì™ì˜™å ì™ì˜™ å ì™ì˜™å ï¿½:\n", 50, 50);
 		
 		for(int i = 0; i < ingredientArray.size(); i++) {
 			
@@ -42,8 +48,8 @@ public class showSymptom extends Frame{
 			if(ingredient.getExplain() != null && !ingredient.getExplain().isEmpty()) {
 				symptomArray = query.ingredientTosymptom(ingredient.getId());
 				contents.append(ingredient.getName()+"\n");
-				contents.append("-¼³¸í: "+ingredient.getExplain()+"\n");
-				contents.append("-Áõ»ó: ");
+				contents.append("-å ì™ì˜™å ì™ì˜™: "+ingredient.getExplain()+"\n");
+				contents.append("-å ì™ì˜™å ì™ì˜™: ");
 				
 				for(int j = 0; j < symptomArray.size(); j++) {
 					if(j == symptomArray.size()) {
@@ -57,15 +63,15 @@ public class showSymptom extends Frame{
 			else {
 				contents.append(ingredient.getName()+"\n");
 			}
-			contents.append("¼·Ãë ¿©ºÎ"+ingredient.getEat()+"\n");
+			contents.append("å ì™ì˜™å ì™ì˜™ å ì™ì˜™å ì™ì˜™"+ingredient.getEat()+"\n");
 		}
 		
 		p1.add(contents);
 		p.add(p1);
 		
 		Panel p2 = new Panel(new GridLayout(1, 2, 10, 10));
-		home = new Button("È¨");
-		hospital = new Button("º´¿øÃ£±â");
+		home = new Button("í™ˆ");
+		hospital = new Button("å ì™ì˜™å ì™ì˜™ì°¾å ì™ì˜™");
 		p2.add(home);
 		p2.add(hospital);
 		p.add(p2);

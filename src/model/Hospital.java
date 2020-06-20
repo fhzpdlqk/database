@@ -1,3 +1,4 @@
+package model;
 
 public class Hospital {
 	private int id;

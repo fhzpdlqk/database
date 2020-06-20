@@ -1,3 +1,6 @@
+package doctor;
+import main.SQLCommand;
+import main.FirstPage;
 import java.awt.Frame;
 import java.awt.Label;
 import java.awt.Panel;
@@ -34,19 +37,19 @@ public class doctorInput extends Frame{
 		Panel p = new Panel();
 		
 		Panel p1 = new Panel();
-		Label label1 = new Label("¹İ·Áµ¿¹° ¼·Ãë °¡´É ¿©ºÎ");
+		Label label1 = new Label("ë°˜ë ¤ë™ë¬¼ ì„­ì·¨ ê°€ëŠ¥ ì—¬ë¶€");
 		choice = new Choice();
-		choice.add("¼·Ãë °¡´É");
-		choice.add("ÀÏºÎ °¡´É");
-		choice.add("ºÒ°¡´É");
+		choice.add("ì„­ì·¨ ê°€ëŠ¥");
+		choice.add("ì¼ë¶€ ê°€ëŠ¥");
+		choice.add("ë¶ˆê°€ëŠ¥");
 		
 		Panel p2 = new Panel();
-		Label label2 = new Label("Àç·á Áõ»ó ¼³¸í");
+		Label label2 = new Label("ì¬ë£Œ ì¦ìƒ ì„¤ëª…");
 		textarea = new TextArea(10,30);
 		textarea.setSize(100,100);
 		
 		Panel p3 = new Panel();
-		Complete = new Button("¿Ï·á");
+		Complete = new Button("ì™„ë£Œ");
 		Complete.setSize(100,30);
 		Complete.addActionListener(new EventHandler());
 		
