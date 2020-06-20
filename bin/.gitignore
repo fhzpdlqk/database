@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /userPage.class
 /userPage$1.class
 /userPage$EventHandler.class
@@ -11,3 +12,9 @@
 /showSymptom.class
 /showSymptom$EventHandler.class
 /showSymptom$1.class
+=======
+/userSelectPage.class
+/userSelectPage$1.class
+/userSelectPage$EventHandler.class
+>>>>>>> d7df90cace93152095e0193d56c063f27cd289cf
+/FirstPage$1.class

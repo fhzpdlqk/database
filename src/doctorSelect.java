@@ -24,6 +24,10 @@ public class doctorSelect extends Frame{
 	
 	Button next;
 	
+	ArrayList<Hospital> hospitalArray;
+	ArrayList<Ingredient> IngredientArray;
+	ArrayList<Symptom> SymptomArray;
+	
 	public doctorSelect() {
 		super();
 		addWindowListener(new WindowAdapter() {
@@ -97,21 +101,21 @@ public class doctorSelect extends Frame{
 			SQLCommand query = new SQLCommand();
 			if(arg0.getSource() == hospiterSearch) {
 				hospiterList.removeAll();
-				ArrayList<Hospital> hospitalArray = query.searchHospital(hospiter.getText());
+				hospitalArray = query.searchHospital(hospiter.getText());
 				for(int i =0; i<hospitalArray.size(); i++) {
 					hospiterList.add(hospitalArray.get(i).getName());
 				}
 			}
 			else if(arg0.getSource() == IngredientSearch) {
 				IngredientList.removeAll();
-				ArrayList<Ingredient> IngredientArray = query.searchIngredient(Ingredient.getText());
+				IngredientArray = query.searchIngredient(Ingredient.getText());
 				for(int i =0; i<IngredientArray.size(); i++) {
 					IngredientList.add(IngredientArray.get(i).getName());
 				}
 			}
 			else if(arg0.getSource() == SymptomSearch) {
 				SymptomList.removeAll();
-				ArrayList<Symptom> SymptomArray = query.searchSymptom(Symptom.getText());
+				SymptomArray = query.searchSymptom(Symptom.getText());
 				for(int i =0; i<SymptomArray.size(); i++) {
 					SymptomList.add(SymptomArray.get(i).getName());
 				}
@@ -119,7 +123,7 @@ public class doctorSelect extends Frame{
 			else if(arg0.getSource() == next) {
 				if(hospiterList.getSelectedItem() != null && IngredientList.getSelectedItem() != null && SymptomList.getSelectedItem() != null) {
 					setVisible(false);
-					new doctorInput(hospiterList.getSelectedItem(), IngredientList.getSelectedItem(), SymptomList.getSelectedItem());
+					new doctorInput(hospitalArray.get(hospiterList.getSelectedIndex()).getId(), IngredientArray.get(IngredientList.getSelectedIndex()).getId(),SymptomArray.get(SymptomList.getSelectedIndex()).getId());
 				}
 			}
 		}

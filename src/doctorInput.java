@@ -16,20 +16,20 @@ public class doctorInput extends Frame{
 	TextArea textarea;
 	Button Complete;
 	
-	String hospitalName;
-	String IngredientName;
-	String SymptomName;
+	int hospitalId;
+	int IngredientId;
+	int SymptomId;
 	
-	public doctorInput(String hospitalName, String IngredientName, String SymptomName) {
+	public doctorInput(int hospitalId, int IngredientId, int SymptomId) {
 		super();
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
 	            System.exit(0);
 	         }
 	    });
-		this.hospitalName = hospitalName;
-		this.IngredientName = IngredientName;
-		this.SymptomName = SymptomName;
+		this.hospitalId = hospitalId;
+		this.IngredientId = IngredientId;
+		this.SymptomId = SymptomId;
 		
 		Panel p = new Panel();
 		
@@ -70,8 +70,13 @@ public class doctorInput extends Frame{
 	class EventHandler implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			SQLCommand sqlcommand = new SQLCommand();
 			if(arg0.getSource() == Complete) {
-				
+				if(choice.getSelectedItem() != null && textarea.getText() != "") {
+					sqlcommand.insertI_S(IngredientId,SymptomId,hospitalId,choice.getSelectedIndex(),textarea.getText());
+					new FirstPage();
+					setVisible(false);
+				}
 			}
 		}
 	}
