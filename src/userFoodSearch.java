@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Choice;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -82,7 +83,12 @@ public class userFoodSearch extends Frame{
 					
 					if(kinds.getSelectedItem().equals("제품")) {
 						setVisible(false);
-						new showProduct(query.searchProduct(nameList.getSelectedItem()).get(0));
+						try {
+							new showProduct(query.searchProduct(nameList.getSelectedItem()).get(0));
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					else if(kinds.getSelectedItem().equals("증상")) {
 						setVisible(false);
