@@ -191,9 +191,16 @@ public class SQLCommand {
 	}
 	public void insertI_S(int IngredientId, int SymptomId, int hospitalId, int eat, String explain) {
 		try {
-			state.executeUpdate("insert into I_S values (" + IngredientId + ", "+ SymptomId + ", " + hospitalId + ");");
-			state.executeUpdate("Update Ingredient SET eat = " + (eat + 1) + " where id = " + IngredientId + ";");
-			state.executeUpdate("Update Ingredient SET explain = '" + explain + "' where id = " + IngredientId + ";");
+			String q = new String();
+			PreparedStatement query;
+			q = "insert into I_S values (?,?,?)";
+			query = connect.prepareStatement(q);
+			query.clearParameters();
+			query.setInt(1, IngredientId);
+			query.setInt(2, SymptomId);
+			query.setInt(3, hospitalId);
+			query.executeUpdate();
+			state.executeUpdate("Update Ingredient SET eat = " + (eat + 1) + ", explain = '" + explain + "' where id = " + IngredientId + ";");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -383,45 +390,54 @@ public class SQLCommand {
 	   }
 	   private static ArrayList<String> initSymptomList(){
 	      ArrayList<String> syptom_list = new ArrayList<String>();
-	      syptom_list.add("�뤃�뗫꽅");
-	      syptom_list.add(" 苑� 沅�");
-	      syptom_list.add(" �깕 �땾 湲� 源�");
-	      syptom_list.add(" �뻼 �뒠�겫 �릯 ");
-	      syptom_list.add("疫뀀맩苑�  �뻿�겫  �읈");
-	      syptom_list.add(" �뒭 �뱽�닶 ");
-	      syptom_list.add("�꽴臾믨퐨 �굢疫꿸퀣弛�");
-	      syptom_list.add("燁삘뫂�벥�뵳 ");
-	      syptom_list.add("癰귣똾六�  �삢 釉�");
-	      syptom_list.add(" 肉쇔닶 ");
-	      syptom_list.add("�븰�뜄�돩");
-	      syptom_list.add(" �깈 �뵃�ⓦ끇 ");
-	      syptom_list.add(" �꺖 �넅�겫�뜄�쎗");
-	      syptom_list.add("餓λ쵐�뀤 �뻿野껋럡��  �뵠 湲썲닶�빘苑�");
-	      syptom_list.add("餓λ쵎猷�");
-	      syptom_list.add("�뜮�뜇�굙");
-	      syptom_list.add(" �꺖癰�  癰�  源�");
-	      syptom_list.add(" �맄亦끹끉堉�");
-	      syptom_list.add(" �굙癰� ");
-	      syptom_list.add("獄쏆뮇�삂");
-	      syptom_list.add("�⑥쥙肉�");
-	      syptom_list.add("�뜮醫듼뀲  �뼎獄쏅베猷�");
-	      syptom_list.add(" 肉쇤겫袁㏓궢 �뼄 �닶�빘湲�");
-	      syptom_list.add(" �맄 肉�");
-	      syptom_list.add("�꽴臾롫궢 �뼄 �닶�빘湲�");
-	      syptom_list.add(" �뮸�릯 ");
-	      syptom_list.add(" 釉� �쟿�몴�떯由�");
-	      syptom_list.add("疫뀀맩苑�癰귣벉彛� 肉�");
-	      syptom_list.add("�뿆�슣�삢 肉�");
-	      syptom_list.add(" 逾얗겫  肉�");
-	      syptom_list.add(" �뵊�겫 ");
-	      syptom_list.add("�겫  �젟�븰 ");
-	      syptom_list.add("野껋럥�졃");
-	      syptom_list.add(" �굙 釉�  �벓��   �삢 釉�");
-	      syptom_list.add("�⑥눖猷� 釉� 獄쏄퀡�닁");
-	      syptom_list.add(" 援� �뱜�몴   �뵠 �궔餓λ쵎猷�");
-	      syptom_list.add(" �삢 �솁 肉�");
-	      syptom_list.add("�눧�떯由� �젾");
-	      syptom_list.add("�⑥쥙媛밧닶 ");
+	      syptom_list.add("구토");
+	      syptom_list.add("설사");
+	      syptom_list.add("혼수상태");
+	      syptom_list.add("식욕부진");
+	      syptom_list.add("급성 신부전");
+	      syptom_list.add("우울증");
+	      syptom_list.add("광선혐기증");
+	      syptom_list.add("침흘림");
+	      syptom_list.add("보행 장애");
+	      syptom_list.add("염증");
+	      syptom_list.add("마비");
+	      syptom_list.add("호흡곤란");
+	      syptom_list.add("소화불량");
+	      syptom_list.add("중추신경계 이상증세");
+	      syptom_list.add("중독");
+	      syptom_list.add("빈혈");
+	      syptom_list.add("소변 변색");
+	      syptom_list.add("위염");
+	      syptom_list.add("위궤양");
+	      syptom_list.add("혈변");
+	      syptom_list.add("경련");
+	      syptom_list.add("발작");
+	      syptom_list.add("고열");
+	      syptom_list.add("빠른 심박동");
+	      syptom_list.add("염분과다 증상");
+	      syptom_list.add("당과다 증상");
+	      syptom_list.add("습진");
+	      syptom_list.add("알레르기");
+	      syptom_list.add("급성복막염");
+	      syptom_list.add("피부염(피부 트러블)");
+	      syptom_list.add("췌장염");
+	      syptom_list.add("흥분");
+	      syptom_list.add("내출혈");
+	      syptom_list.add("부정맥");
+	      syptom_list.add("신장 기능 장애");
+	      syptom_list.add("비정상적인 혈액산도");
+	      syptom_list.add("고혈압");
+	      syptom_list.add("저혈당증");
+	      syptom_list.add("혈액 응고 장애");
+	      syptom_list.add("고창증");
+	      syptom_list.add("갈증");
+	      syptom_list.add("탈수");
+	      syptom_list.add("과도한 배뇨");
+	      syptom_list.add("나트륨 이온중독");
+	      syptom_list.add("복통");
+	      syptom_list.add("장파열");
+	      syptom_list.add("무기력");
+	      
 	      
 	      return syptom_list;
 	   }
@@ -614,7 +630,7 @@ public class SQLCommand {
 
 		         String q = new String();
 		         PreparedStatement query;
-		         q = "insert into hospital(name,address,phone) values (?, ?, ?);";
+		         q = "insert into hospital(name,phone,address) values (?, ?, ?);";
 		         query = conn.prepareStatement(q);
 		         query.clearParameters();
 		         query.setString(1, hsp_name);
