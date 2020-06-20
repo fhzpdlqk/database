@@ -39,7 +39,8 @@ public class FirstPage extends Frame{
 				new doctorSelect();
 			}
 			else {
-				
+				setVisible(false);
+				new userPage();
 			}
 		}
 	}
