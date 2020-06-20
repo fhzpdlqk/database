@@ -1,20 +1,15 @@
-<<<<<<< HEAD
-/userPage.class
-/userPage$1.class
-/userPage$EventHandler.class
-/userFoodSearch.class
-/userFoodSearch$1.class
-/userFoodSearch$EventHandler.class
-/Product.class
-/showProduct.class
 /showProduct$1.class
 /showProduct$EventHandler.class
-/showSymptom.class
-/showSymptom$EventHandler.class
+/showProduct.class
 /showSymptom$1.class
-=======
-/userSelectPage.class
+/showSymptom$EventHandler.class
+/showSymptom.class
+/userFoodSearch$1.class
+/userFoodSearch$EventHandler.class
+/userFoodSearch.class
+/userPage$1.class
+/userPage$EventHandler.class
+/userPage.class
 /userSelectPage$1.class
 /userSelectPage$EventHandler.class
->>>>>>> d7df90cace93152095e0193d56c063f27cd289cf
-/FirstPage$1.class
+/userSelectPage.class
