@@ -1,26 +1,70 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
 public class SQLCommand {
-	Connection connect;
-	Statement state;
+	private String stmt;
+	private PreparedStatement p;
+	private Connection connection;
+	
 	public SQLCommand() {
 		try {
-			connect = DriverManager.getConnection("jdbc:postgresql://localhost/postgres","postgres","qwer1234");
-			state = connect.createStatement();
+			connection = DriverManager.getConnection("jdbc:postgresql://localhost/postgres","postgres","qwer1234");		
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public Product equalProduct(String productName) throws SQLException{
+		try {
+			stmt = "select P.id, P.name, P.nutrition, P.imgURL from Product P where P.name = ?";
+			p = connection.prepareStatement(stmt);			
+			p.setString(1, productName);
+			
+			ResultSet rs = p.executeQuery();
+			rs.next();
+			
+			Product product = new Product(rs.getInt(1),rs.getString(2), rs.getString(3), rs.getString(4));
+			
+			return product;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public Ingredient equalIngredient(String ingredientName) throws SQLException{
+		try {
+			stmt = "select I.id, I.name, I.eat, I.explain from Ingredient I where I.name = ?";
+			p = connection.prepareStatement(stmt);			
+			p.setString(1, ingredientName);
+			
+			ResultSet rs = p.executeQuery();
+			rs.next();
+			
+			Ingredient ingredient = new Ingredient(rs.getInt(1),rs.getString(2), rs.getInt(3), rs.getString(4));
+			
+			return ingredient;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;	
+	}
+	
 	public ArrayList<Product> searchProduct(String productName){
 		try {
 			ArrayList<Product> result = new ArrayList<Product>();
+			stmt = "select P.id, P.name, P.nutrition, P.imgURL from Product P where P.name LIKE '%?%'";
+			p = connection.prepareStatement(stmt);
+			p.setString(1, productName);
 			
-			ResultSet rs = state.executeQuery("select P.id, P.name, P.nutrition, P.imgURL from Product P where P.name LIKE '%" + productName + "%'");
+			ResultSet rs = p.executeQuery();
 			while(rs.next()) {
 				Product product = new Product(rs.getInt(1),rs.getString(2), rs.getString(3), rs.getString(4));
 				result.add(product);
@@ -35,9 +79,12 @@ public class SQLCommand {
 	
 	public ArrayList<Hospital> searchHospital(String hospitalName){
 		try {
-			ArrayList<Hospital> result = new ArrayList<Hospital>();
+			ArrayList<Hospital> result = new ArrayList<Hospital>();		
+			stmt = "select H.id, H.name, H.address, H.phone from Hospital H where H.name LIKE '%?%'";
+			p = connection.prepareStatement(stmt);
+			p.setString(1, hospitalName);
 			
-			ResultSet rs = state.executeQuery("select H.id, H.name, H.address, H.phone from Hospital H where H.name LIKE '%" + hospitalName+ "%'");
+			ResultSet rs = p.executeQuery();
 			while(rs.next()) {
 				Hospital hospital = new Hospital(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
 				result.add(hospital);
@@ -50,11 +97,14 @@ public class SQLCommand {
 		}
 	}
 	
-	public ArrayList<Ingredient> searchIngredient(String IngredientName){
+	public ArrayList<Ingredient> searchIngredient(String ingredientName){
 		try {
 			ArrayList<Ingredient> result = new ArrayList<Ingredient>();
+			stmt = "select I.id, I.name, I.eat, I.explain from Ingredient I where I.name LIKE '%?%'";
+			p = connection.prepareStatement(stmt);
+			p.setString(1, ingredientName);
 			
-			ResultSet rs = state.executeQuery("select I.id, I.name, I.eat, I.explain from Ingredient I where I.name LIKE '%" + IngredientName + "%'");
+			ResultSet rs = p.executeQuery();
 			while(rs.next()) {
 				Ingredient ingredient = new Ingredient(rs.getInt(1),rs.getString(2), rs.getInt(3), rs.getString(4));
 				result.add(ingredient);
@@ -67,11 +117,14 @@ public class SQLCommand {
 		return null;
 	}
 	
-	public ArrayList<Symptom> searchSymptom(String SymptomName){
+	public ArrayList<Symptom> searchSymptom(String symptomName){
 		try {
 			ArrayList<Symptom> result = new ArrayList<Symptom>();
+			stmt = "select S.id, S.name from Symptom S where S.name LIKE '%?%'";
+			p = connection.prepareStatement(stmt);
+			p.setString(1, symptomName);
 			
-			ResultSet rs = state.executeQuery("select S.id, S.name from Symptom S where S.name LIKE '%" + SymptomName +"%'");
+			ResultSet rs = p.executeQuery();
 			while(rs.next()) {
 				Symptom symptom = new Symptom(rs.getInt(1), rs.getString(2));
 				result.add(symptom);
@@ -83,74 +136,125 @@ public class SQLCommand {
 		}
 		return null;
 	}
-	
-	public ArrayList<Ingredient> productToingredient(int pId){
+
+	public ResultSet productList(String productName){
 		try {
-			ArrayList<Ingredient> result = new ArrayList<Ingredient>();
-			
-			ResultSet rs = state.executeQuery("select I.id, I.name Iname, I.explain, I.eat\n" + 
+			stmt = "select P.id, P.name, max(I.eat)\n" + 
 					"from Product P inner join P_I PI on (P.id = PI.productID)\n" + 
-					"inner join Ingredient I on (PI.ingredientID = I.id)\n" +  
-					"where P.id = "+pId+";");
+					"inner join Ingredient I on (PI.ingredientID = I.id)\n" + 
+					"where P.name LIKE '%?%'\n" +
+					"group by P.id, P.name";
+			p = connection.prepareStatement(stmt);
+			p.setString(1, productName);
 			
-			while(rs.next()) {
-				Ingredient ingredient = new Ingredient(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4));
-				result.add(ingredient);
-			}
+			ResultSet rs = p.executeQuery();
 			
-			return result;
+			return rs;
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	public ArrayList<Symptom> ingredientTosymptom(int iId){
+	public ResultSet productDetail(int pId){
 		try {
-			ArrayList<Symptom> result = new ArrayList<Symptom>();
+			stmt = "select I.name Iname, I.explain, I.eat, S.name Sname\n" + 
+					"from Product P inner join P_I PI on (P.id = PI.productID)\n" + 
+					"inner join Ingredient I on (PI.ingredientID = I.id)\n" + 
+					"inner join I_S on (I.id = I_S.ingredientID)\n" + 
+					"inner join Symptom S on (I_S.symptomID = S.id)\n" + 
+					"where P.id = ? order by Iname;";
+			p = connection.prepareStatement(stmt);
+			p.setInt(1, pId);
 			
-			ResultSet rs = state.executeQuery("select S.id, S.name Sname\n" + 
-					"from Ingredient I inner join I_S IS on (I.id = IS.ingredientID)\n" + 
-					"inner join Symptom S on (IS.symptomID = S.id)\n" +  
-					"where I.id = "+iId+";");
+			ResultSet rs = p.executeQuery();
 			
-			while(rs.next()) {
-				Symptom symptom = new Symptom(rs.getInt(1), rs.getString(2));
-				result.add(symptom);
-			}
+			return rs;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/*
+	public ResultSet iIngredientList(String ingredientName){
+		try {
+			stmt = "select I.id, I.name, I.eat\n" + 
+					"from Ingredient I\n" + 
+					"where I.name LIKE '%?%';";
+			p = connection.prepareStatement(stmt);
+			p.setString(1, ingredientName);
 			
-			return result;
+			ResultSet rs = p.executeQuery();
+			
+			return rs;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	*/
+	public ResultSet ingredientList(String symptomName) {
+		try {
+			stmt = "select I.id, I.name, I.eat\n" + 
+					"from Symptom S\n" + 
+					"inner join I_S on (S.id = I_S.symptomID)\n" + 
+					"inner join Ingredient I on (I_S.ingredientID = I.id)\n" + 
+					"where S.name LIKE '%?%';";
+			p = connection.prepareStatement(stmt);
+			p.setString(1, symptomName);
+			
+			ResultSet rs = p.executeQuery();
+			
+			return rs;
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	public ArrayList<Ingredient> symptomToingredient(int sId){
+	public ResultSet ingredientDetail(int iId) {
 		try {
-			ArrayList<Ingredient> result = new ArrayList<Ingredient>();
+			stmt = "select I.name, I.explain, I.eat, S.name\n" + 
+					"from Ingredient I\n" + 
+					"inner join I_S on (I.id = I_S.ingredientID)\n" + 
+					"inner join Symptom S on (I_S.symptomID = S.id)\n" + 
+					"where I.id = ?;";
+			p = connection.prepareStatement(stmt);
+			p.setInt(1, iId);
 			
-			ResultSet rs = state.executeQuery("select I.id, I.name Iname, I.explain, I.eat\n" + 
-					"from Symptom S inner join I_S IS on (S.id = IS.symptomID)\n" + 
-					"inner join Ingredient I on (IS.ingredientID = I.id)\n" +  
-					"where S.id = "+sId+";");
+			ResultSet rs = p.executeQuery();
 			
-			while(rs.next()) {
-				Ingredient ingredient = new Ingredient(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4));
-				result.add(ingredient);
-			}
-			
-			return result;
+			return rs;
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	public void insertI_S(int IngredientId, int SymptomId, int hospitalId, int eat, String explain) {
+	
+	public void insertI_S(int ingredientId, int symptomId, int hospitalId, int eat, String explain) {
 		try {
-			state.executeUpdate("insert into I_S values (" + IngredientId + ", "+ SymptomId + ", " + hospitalId + ");");
-			state.executeUpdate("Update Ingredient SET eat = " + (eat+1) + " where id = " + IngredientId + ";");
-			state.executeUpdate("Update Ingredient SET explain = '" + explain + "' where id = " + IngredientId + ";");
+			stmt = "insert into I_S values (?, ?, ?);";
+			p = connection.prepareStatement(stmt);
+			p.setInt(1, ingredientId);
+			p.setInt(2, symptomId);
+			p.setInt(3, hospitalId);
+			
+			p.executeUpdate();
+			
+			stmt = "Update Ingredient SET eat = ? where id = ?;";
+			p = connection.prepareStatement(stmt);
+			p.setInt(1, eat+1);
+			p.setInt(2, ingredientId);
+			
+			p.executeUpdate();
+			
+			stmt = "Update Ingredient SET explain = '?' where id = ?;";
+			p = connection.prepareStatement(stmt);
+			p.setString(1, explain);
+			p.setInt(2, ingredientId);
+			
+			p.executeUpdate();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

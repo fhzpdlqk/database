@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.awt.Image;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -20,30 +23,29 @@ import javax.swing.JLabel;
 public class showProduct extends Frame{
 	
 	private Product product;
-	private ArrayList<Ingredient> ingredientArray;
-	private ArrayList<Symptom> symptomArray;
-	private Ingredient ingredient;
+	private ArrayList<String> symptomArray;
+	private SQLCommand query = new SQLCommand();
+	private IngredientS ingredient = new IngredientS("","",0);
+	private ResultSet rs;
 	
 	Button home;
 	Button hospital;
 	
-	public showProduct(Product product) throws IOException {
+	public showProduct(String productName) throws SQLException, IOException{
 		super();
+		this.product = query.equalProduct(productName);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
 				System.exit(0);
 			}
 		});
-		this.product = new Product(product.getId(), product.getName(), product.getNutrition(), product.getImgURL());
-		SQLCommand query = new SQLCommand();
-		this.ingredientArray  = query.productToingredient(product.getId());
 		
 		Panel p = new Panel();
 		p.setLayout(new BoxLayout(p,BoxLayout.Y_AXIS));
 		
 		Panel p1 = new Panel();
-		Label productName = new Label(product.getName(), Label.CENTER);
-		p1.add(productName);
+		Label title = new Label(product.getName(), Label.CENTER);
+		p1.add(title);
 		
 		try {
 			Panel p2 = new Panel();
@@ -61,39 +63,45 @@ public class showProduct extends Frame{
 		}
 		
 		Panel p3 = new Panel();
-		TextArea contents = new TextArea("Àç·á:\n", 50, 50);
+		TextArea contents = new TextArea("ìž¬ë£Œ:\n", 50, 50);
+		rs = query.productDetail(product.getId());
 		
-		for(int i = 0; i < ingredientArray.size(); i++) {
-			
-			this.ingredient = ingredientArray.get(i);
-
-			if(ingredient.getExplain() != null && !ingredient.getExplain().isEmpty()) {
-				symptomArray = query.ingredientTosymptom(ingredient.getId());
-				contents.append(ingredient.getName()+"\n");
-				contents.append("-¼³¸í: "+ingredient.getExplain()+"\n");
-				contents.append("-Áõ»ó: ");
-				
-				for(int j = 0; j < symptomArray.size(); j++) {
-					if(j == symptomArray.size()) {
-						contents.append(symptomArray.get(j).getName()+"\n");
-					}
-					else {
-					contents.append(symptomArray.get(j).getName()+",");
+		while(rs.next()) {
+			if(rs.getString("Iname") == ingredient.getIname()) {
+				ingredient.setSname(rs.getString("Sname"));
+			}else {
+				if(!ingredient.getIname().equals("")) {
+					
+					contents.append(ingredient.getIname());
+					
+					if(!ingredient.getExplain().equals("")) {
+						contents.append("-ì„¤ëª…: "+ingredient.getExplain()+"\n");
+						symptomArray = ingredient.getSname();
+						contents.append("-ì¦ìƒ: ");
+					
+						for(String S:symptomArray) {
+							contents.append(S);
+						}
+						contents.append("\n");
+						
+						if(ingredient.getEat() == 1) {
+							contents.append("-ìœ„í—˜ë„: í•˜\n");
+						}else if(ingredient.getEat() == 2){
+							contents.append("-ìœ„í—˜ë„: ì¤‘\\n");
+						}else {
+							contents.append("-ìœ„í—˜ë„: ìƒ\n");
+						}
 					}
 				}
+				ingredient = new IngredientS(rs.getString("Iname"), rs.getString("I.explain"), rs.getInt("I.eat"));
 			}
-			else {
-				contents.append(ingredient.getName()+"\n");
-			}
-			contents.append("¼·Ãë ¿©ºÎ"+ingredient.getEat()+"\n");
 		}
-		
 		p3.add(contents);
 		p.add(p3);
 		
 		Panel p4 = new Panel(new GridLayout(1, 2, 10, 10));
-		home = new Button("È¨");
-		hospital = new Button("º´¿øÃ£±â");
+		home = new Button("í™ˆ");
+		hospital = new Button("ë³‘ì›ì°¾ê¸°");
 		p4.add(home);
 		p4.add(hospital);
 		p.add(p4);
@@ -113,6 +121,7 @@ public class showProduct extends Frame{
 			}
 			else if(arg0.getSource() == hospital) {
 				setVisible(false);
+				// ë™ë¬¼ë³‘ì› ì°¾ê¸°
 			}
 		}
 	}

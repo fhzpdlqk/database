@@ -13,8 +13,8 @@ public class userPage extends Frame{
 			}
 		});
 		Panel p = new Panel();
-		btn1 = new Button("½ÄÇ° Á¤º¸ Ã£±â");
-		btn2 = new Button("µ¿¹°º´¿ø Ã£±â");
+		btn1 = new Button("ì‹í’ˆ ì •ë³´ ì°¾ê¸°");
+		btn2 = new Button("ë™ë¬¼ë³‘ì› ì°¾ê¸°");
 		
 		p.add(btn1);
 		p.add(btn2);
@@ -36,7 +36,7 @@ public class userPage extends Frame{
 		public void actionPerformed(ActionEvent arg0) {
 			if(arg0.getSource() == btn2) {
 				setVisible(false);
-				
+				// ë™ë¬¼ë³‘ì› ì°¾ê¸°
 			}
 			else if(arg0.getSource() == btn1){
 				setVisible(false);

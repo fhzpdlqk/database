@@ -8,6 +8,8 @@ import java.awt.Button;
 import java.awt.Choice;
 import java.awt.event.*;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
@@ -32,11 +34,11 @@ public class userFoodSearch extends Frame{
 		Panel p1 = new Panel();
 		kinds = new Choice();
 		name = new TextField(20);
-		nameSearch = new Button("°Λ»φ");
+		nameSearch = new Button("κ²€μƒ‰");
 		nameList = new List(20, false);
 		
-		kinds.add("Α¦Η°");
-		kinds.add("Αυ»σ");
+		kinds.add("μ ν’");
+		kinds.add("μ¦μƒ");
 		nameSearch.addActionListener(new EventHandler());
 		
 		p1.add(kinds);
@@ -48,7 +50,7 @@ public class userFoodSearch extends Frame{
 		p.add(nameList);
 		
 		Panel p2 = new Panel();
-		next = new Button("΄Ωΐ½");
+		next = new Button("λ‹¤μ");
 		p2.add(next);
 		p.add(p2);
 		
@@ -64,35 +66,70 @@ public class userFoodSearch extends Frame{
 			SQLCommand query = new SQLCommand();
 			if(arg0.getSource() == nameSearch) {
 				nameList.removeAll();
-				if(kinds.getSelectedItem().equals("Α¦Η°")) {
-					ArrayList<Product> productArray = query.searchProduct(name.getText());
-					for(int i = 0; i < productArray.size(); i++) {
-						nameList.add(productArray.get(i).getName());
+				if(kinds.getSelectedItem().equals("μ ν’")) {
+					ResultSet rs = query.productList(name.getText());
+					
+					try {
+						while(rs.next()) {
+							if(rs.getInt("I.eat") == 3) {
+								nameList.add(rs.getString("P.name")+" μ„ν—λ„:μƒ");
+							}else if(rs.getInt("I.eat") == 2) {
+								nameList.add(rs.getString("P.name")+" μ„ν—λ„:μ¤‘");
+							}else if(rs.getInt("I.eat") == 1) {
+								nameList.add(rs.getString("P.name")+" μ„ν—λ„:ν•");
+							}else {
+								nameList.add(rs.getString("P.name      "));
+							}
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
-				else if(kinds.getSelectedItem().equals("Αυ»σ")){
+				else if(kinds.getSelectedItem().equals("μ¦μƒ")){
 					nameList.removeAll();
-					ArrayList<Symptom> symptomArray = query.searchSymptom(name.getText());
-					for(int i =0; i<symptomArray.size(); i++) {
-						nameList.add(symptomArray.get(i).getName());
+					ResultSet rs = query.ingredientList(name.getText());
+
+					try {
+						while(rs.next()) {
+							if(rs.getInt("I.eat") == 3) {
+								nameList.add(rs.getString("P.name")+" μ„ν—λ„:μƒ");
+							}else if(rs.getInt("I.eat") == 2) {
+								nameList.add(rs.getString("P.name")+" μ„ν—λ„:μ¤‘");
+							}else if(rs.getInt("I.eat") == 1) {
+								nameList.add(rs.getString("P.name")+" μ„ν—λ„:ν•");
+							}else {
+								nameList.add(rs.getString("P.name      "));
+							}
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
 			}
 			else if(arg0.getSource() == next) {
 				if(nameList.getSelectedItem() != null) {
-					
-					if(kinds.getSelectedItem().equals("Α¦Η°")) {
+					if(kinds.getSelectedItem().equals("μ ν’")) {
 						setVisible(false);
 						try {
-							new showProduct(query.searchProduct(nameList.getSelectedItem()).get(0));
+							new showProduct(nameList.getSelectedItem().substring(0, nameList.getSelectedItem().length()-7));
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-					else if(kinds.getSelectedItem().equals("Αυ»σ")) {
+					else if(kinds.getSelectedItem().equals("μ¦μƒ")) {
 						setVisible(false);
-						new showSymptom(query.searchSymptom(nameList.getSelectedItem()).get(0));
+						try {
+							new showIngredient(nameList.getSelectedItem().substring(0, nameList.getSelectedItem().length()-7));
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 			}
