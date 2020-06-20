@@ -1,10 +1,15 @@
 package user;
 import java.awt.Frame;
 import java.awt.Label;
+import java.awt.List;
 import java.awt.Panel;
 import java.awt.TextField;
 import java.awt.event.*;
 import java.util.ArrayList;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 
 import main.SQLCommand;
 import model.Hospital;
@@ -14,7 +19,7 @@ import java.awt.Button;
 public class searchHospital extends Frame{
 	TextField hospitalText;
 	Button search;
-	Panel p2;
+	JLabel p2;
 	public searchHospital() {
 		super();
 		addWindowListener(new WindowAdapter() {
@@ -32,10 +37,13 @@ public class searchHospital extends Frame{
 		p1.add(hospitalText);
 		p1.add(search);
 		
-		p2 = new Panel();
+		p2 = new JLabel();
 		
 		p.add(p1);
 		p.add(p2);
+		p.setLayout(null);
+		p1.setBounds(0,0,500,50);
+		p2.setBounds(0,0,500,600);
 		
 		add(p);
 		setSize(500,600);
@@ -44,16 +52,21 @@ public class searchHospital extends Frame{
 	class EventHandler implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			SQLCommand query = new SQLCommand();
-			ArrayList<Hospital> result = query.searchHospital(hospitalText.getText());
-			p2.removeAll();
-			for(int i =0; i < result.size(); i++) {
-				Panel temp = new Panel();
-				Label name = new Label(result.get(i).getName());
-				Label address = new Label(result.get(i).getAddress());
-				temp.add(name);
-				temp.add(address);
-				p2.add(temp);
+			if(arg0.getSource() == search) {
+				SQLCommand query = new SQLCommand();
+				ArrayList<Hospital> result = query.searchHospital(hospitalText.getText());
+				String text = new String();
+				text += "<html><br/>";
+				int len = result.size() > 6 ? 6 : result.size();
+				for(int i =0; i < len; i++) {
+					System.out.println(result.get(i).getName());
+					text += "<html>" + result.get(i).getName() + "<br/>";
+					text += result.get(i).getPhone() + "<br/>";
+					text += result.get(i).getAddress() + "<br/>";
+					text += "----------------------------------- <br/>";
+ 				}
+				text += "</html>";
+				p2.setText(text);
 			}
 		}
 	}
