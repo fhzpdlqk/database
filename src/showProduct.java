@@ -7,7 +7,15 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.Button;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.awt.Image;
+import java.net.MalformedURLException;
+import java.net.URL;
+import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 public class showProduct extends Frame{
 	
@@ -19,7 +27,7 @@ public class showProduct extends Frame{
 	Button home;
 	Button hospital;
 	
-	public showProduct(Product product) {
+	public showProduct(Product product) throws IOException {
 		super();
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
@@ -31,9 +39,29 @@ public class showProduct extends Frame{
 		this.ingredientArray  = query.productToingredient(product.getId());
 		
 		Panel p = new Panel();
+		p.setLayout(new BoxLayout(p,BoxLayout.Y_AXIS));
 		
 		Panel p1 = new Panel();
-		TextArea contents = new TextArea(product.getName()+"\n\n재료:\n", 50, 50);
+		Label productName = new Label(product.getName(), Label.CENTER);
+		p1.add(productName);
+		
+		try {
+			Panel p2 = new Panel();
+			
+			Image image;
+			URL url = new URL(product.getImgURL());
+			image = ImageIO.read(url);
+			
+			JLabel img = new JLabel(new ImageIcon(image));
+			
+			p2.add(img);
+			p.add(p2);
+		}catch(MalformedURLException ex) {
+			ex.printStackTrace();
+		}
+		
+		Panel p3 = new Panel();
+		TextArea contents = new TextArea("재료:\n", 50, 50);
 		
 		for(int i = 0; i < ingredientArray.size(); i++) {
 			
@@ -60,15 +88,15 @@ public class showProduct extends Frame{
 			contents.append("섭취 여부"+ingredient.getEat()+"\n");
 		}
 		
-		p1.add(contents);
-		p.add(p1);
+		p3.add(contents);
+		p.add(p3);
 		
-		Panel p2 = new Panel(new GridLayout(1, 2, 10, 10));
+		Panel p4 = new Panel(new GridLayout(1, 2, 10, 10));
 		home = new Button("홈");
 		hospital = new Button("병원찾기");
-		p2.add(home);
-		p2.add(hospital);
-		p.add(p2);
+		p4.add(home);
+		p4.add(hospital);
+		p.add(p4);
 		
 		add(p);
 		
