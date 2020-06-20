@@ -13,8 +13,8 @@ public class FirstPage extends Frame{
 	         }
 	    });
 		Panel p = new Panel();
-		btn1 = new Button("ÀÏ¹İ »ç¿ëÀÚ");
-		btn2 = new Button("¼öÀÇ»ç");
+		btn1 = new Button("ì‚¬ìš©ì");
+		btn2 = new Button("ìˆ˜ì˜ì‚¬");
 		
 		p.add(btn1);
 		p.add(btn2);

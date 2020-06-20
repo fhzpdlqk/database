@@ -10,7 +10,7 @@ public class SQLCommand {
 	Statement state;
 	public SQLCommand() {
 		try {
-			connect = DriverManager.getConnection("jdbc:postgresql://localhost/postgres","postgres","kangho");
+			connect = DriverManager.getConnection("jdbc:postgresql://localhost/postgres","postgres","qwer1234");
 			state = connect.createStatement();
 		}catch(Exception e) {
 			e.printStackTrace();
