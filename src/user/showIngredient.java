@@ -24,7 +24,7 @@ public class showIngredient extends Frame{
 	private Symptom symptom;
 	private ArrayList<String> symptomArray;
 	private Ingredient ingredient;
-	private IngredientS ingredientS = new IngredientS("","",0);;
+	private IngredientS ingredientS = new IngredientS("","",0, "");;
 	private ResultSet rs;
 	private SQLCommand query = new SQLCommand();
 
@@ -49,7 +49,7 @@ public class showIngredient extends Frame{
 		p.add(p1);
 
 		Panel p2 = new Panel();
-		TextArea contents = new TextArea(50, 50);
+		TextArea contents = new TextArea(10, 50);
 		rs = query.ingredientDetail(ingredient.getId());
 
 		while(rs.next()) {
@@ -78,7 +78,7 @@ public class showIngredient extends Frame{
 						}
 					}
 				}
-				ingredientS = new IngredientS(rs.getString(1), rs.getString(2), rs.getInt(3));
+				ingredientS = new IngredientS(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4));
 			}
 		}
 		
@@ -100,6 +100,7 @@ public class showIngredient extends Frame{
 				contents.append("-위험도: 상\n");
 			}
 		}
+		
 		p2.add(contents);
 		p.add(p2);
 

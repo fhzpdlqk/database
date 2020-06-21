@@ -32,7 +32,7 @@ public class showProduct extends Frame{
 	private Product product;
 	private ArrayList<String> symptomArray;
 	private SQLCommand query = new SQLCommand();
-	private IngredientS ingredientS = new IngredientS("","",0);
+	private IngredientS ingredientS = new IngredientS("","",0, "");
 	private ResultSet rs;
 	
 	Button home;
@@ -71,12 +71,13 @@ public class showProduct extends Frame{
 		}
 		
 		Panel p3 = new Panel();
-		TextArea contents = new TextArea("재료:\n", 30, 50);
+		TextArea contents = new TextArea("재료:\n", 10, 50);
 		rs = query.productDetail(product.getId());
 		
 		while(rs.next()) {
-
+			System.out.println("111"+rs.getString(4));
 			if(rs.getString(1).equals(ingredientS.getIname())) {
+				
 				ingredientS.setSname(rs.getString(4));
 			}else {
 				if(!ingredientS.getIname().equals("")) {
@@ -102,7 +103,7 @@ public class showProduct extends Frame{
 						}
 					}
 				}
-				ingredientS = new IngredientS(rs.getString(1), rs.getString(2), rs.getInt(3));
+				ingredientS = new IngredientS(rs.getString(1), rs.getString(2), rs.getInt(3), rs.getString(4));
 			}
 		}
 		

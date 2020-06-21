@@ -9,13 +9,14 @@ public class IngredientS {
 	private int eat;
 	private ArrayList<String> Sname;
 
-	public IngredientS(String Iname, String explain, int eat) {
+	public IngredientS(String Iname, String explain, int eat, String sname) {
 		this.Iname = Iname;
 		this.explain = explain;
 		this.eat = eat;
 		this.Sname = new ArrayList<String>();
+		Sname.add(sname);
 	}
-
+	
 	public String getIname() {
 		return Iname;
 	}
