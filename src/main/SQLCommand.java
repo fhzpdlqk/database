@@ -59,7 +59,7 @@ public class SQLCommand {
 	private PreparedStatement p;
 	public SQLCommand() {
 		try {
-			connect = DriverManager.getConnection("jdbc:postgresql://localhost/postgres","postgres","qwer1234");
+			connect = DriverManager.getConnection("jdbc:postgresql://localhost/postgres","postgres","kangho");
 			connect.setAutoCommit(true);
 			state = connect.createStatement();
 		}catch(Exception e) {
@@ -192,8 +192,8 @@ public class SQLCommand {
 					"inner join Ingredient I on (PI.ingredientID = I.id)\n" + 
 					"left join I_S on (I.id = I_S.ingredientID)\n" + 
 					"left join Symptom S on (I_S.symptomID = S.id)\n" + 
-					"where P.id = 5\n" + 
-					"union all\n" + 
+					"where P.id = ?\n" + 
+					"union\n" + 
 					"select I.name Iname, I.explain, I.eat, S.name\n" + 
 					"from Product P inner join P_I PI on (P.id = PI.productID)\n" + 
 					"inner join Ingredient I on (PI.ingredientID = I.id)\n" + 
@@ -203,6 +203,7 @@ public class SQLCommand {
 			p = connect.prepareStatement(stmt);
 			p.clearParameters();
 			p.setInt(1, pId);
+			p.setInt(2, pId);
 			ResultSet rs = p.executeQuery();
 			return rs;
 		}catch(Exception e) {
@@ -250,6 +251,7 @@ public class SQLCommand {
 					"inner join Symptom S on (I_S.symptomID = S.id)\n" + 
 					"where I.id = ?;";
 			p = connect.prepareStatement(stmt);
+			p.clearParameters();
 			p.setInt(1, iId);
 			ResultSet rs = p.executeQuery();
 
