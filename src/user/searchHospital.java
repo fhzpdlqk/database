@@ -54,7 +54,7 @@ public class searchHospital extends Frame{
 		public void actionPerformed(ActionEvent arg0) {
 			if(arg0.getSource() == search) {
 				SQLCommand query = new SQLCommand();
-				ArrayList<Hospital> result = query.searchHospital(hospitalText.getText());
+				ArrayList<Hospital> result = query.searchHospitalAddress(hospitalText.getText());
 				String text = new String();
 				text += "<html><br/>";
 				int len = result.size() > 6 ? 6 : result.size();

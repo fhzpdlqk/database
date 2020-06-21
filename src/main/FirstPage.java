@@ -27,8 +27,8 @@ public class FirstPage extends Frame{
 		btn2.addActionListener(new EventHandler());
 		
 		p.setLayout(null);
-		btn1.setBounds(200,185,100,30);
-		btn2.setBounds(200,385,100,30);
+		btn1.setBounds(150,185,200,50);
+		btn2.setBounds(150,385,200,50);
 		
 		
 		add(p);
