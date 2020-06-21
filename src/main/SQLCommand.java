@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -51,13 +54,53 @@ import org.xml.sax.InputSource;
 public class SQLCommand {
 	Connection connect;
 	Statement state;
+
+	private String stmt;
+	private PreparedStatement p;
 	public SQLCommand() {
 		try {
-			connect = DriverManager.getConnection("jdbc:postgresql://localhost/postgres","postgres","wjdtjd864");
+			connect = DriverManager.getConnection("jdbc:postgresql://localhost/postgres","postgres","qwer1234");
+			connect.setAutoCommit(true);
 			state = connect.createStatement();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	public Product equalProduct(String productName) throws SQLException{
+		try {
+			stmt = "select P.id, P.name, P.nutrition, P.imageurl from Product P where P.name = ?";
+			p = connect.prepareStatement(stmt);			
+			p.setString(1, productName);
+
+			ResultSet rs = p.executeQuery();
+			if(rs.next()) {
+				Product product = new Product(rs.getInt(1),rs.getString(2), rs.getString(3), rs.getString(4));
+				return product;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Ingredient equalIngredient(String ingredientName) throws SQLException{
+		try {
+			stmt = "select I.id, I.name, I.eat, I.explain from Ingredient I where I.name = ?";
+			p = connect.prepareStatement(stmt);			
+			p.setString(1, ingredientName);
+
+			ResultSet rs = p.executeQuery();
+			rs.next();
+
+			Ingredient ingredient = new Ingredient(rs.getInt(1),rs.getString(2), rs.getInt(3), rs.getString(4));
+
+			return ingredient;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;	
 	}
 	public ArrayList<Product> searchProduct(String productName){
 		try {
@@ -127,63 +170,90 @@ public class SQLCommand {
 		return null;
 	}
 	
-	public ArrayList<Ingredient> productToingredient(int pId){
+	public ResultSet productList(String productName){
 		try {
-			ArrayList<Ingredient> result = new ArrayList<Ingredient>();
-			
-			ResultSet rs = state.executeQuery("select I.id, I.name Iname, I.explain, I.eat\n" + 
+		stmt = "select P.id, P.name, max(I.eat)\n" + 
+				"from Product P inner join P_I PI on (P.id = PI.productID)\n" + 
+				"inner join Ingredient I on (PI.ingredientID = I.id)\n" + 
+				"where P.name LIKE '%"+ productName +"%'\n" +
+				"group by P.id, P.name";
+		ResultSet rs = state.executeQuery(stmt);
+		return rs;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public ResultSet productDetail(int pId){
+		try {
+			stmt = "select I.name Iname, I.explain, I.eat, S.name\n" + 
 					"from Product P inner join P_I PI on (P.id = PI.productID)\n" + 
-					"inner join Ingredient I on (PI.ingredientID = I.id)\n" +  
-					"where P.id = "+pId+";");
-			
-			while(rs.next()) {
-				Ingredient ingredient = new Ingredient(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4));
-				result.add(ingredient);
-			}
-			
-			return result;
+					"inner join Ingredient I on (PI.ingredientID = I.id)\n" + 
+					"left join I_S on (I.id = I_S.ingredientID)\n" + 
+					"left join Symptom S on (I_S.symptomID = S.id)\n" + 
+					"where P.id = 5\n" + 
+					"union all\n" + 
+					"select I.name Iname, I.explain, I.eat, S.name\n" + 
+					"from Product P inner join P_I PI on (P.id = PI.productID)\n" + 
+					"inner join Ingredient I on (PI.ingredientID = I.id)\n" + 
+					"inner join I_S on (I.id = I_S.ingredientID)\n" + 
+					"inner join Symptom S on (I_S.symptomID = S.id)\n" + 
+					"where P.id = ? order by Iname;";
+			p = connect.prepareStatement(stmt);
+			p.clearParameters();
+			p.setInt(1, pId);
+			ResultSet rs = p.executeQuery();
+			return rs;
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	public ArrayList<Symptom> ingredientTosymptom(int iId){
+	public ResultSet ingredientList(String symptomName) {
 		try {
-			ArrayList<Symptom> result = new ArrayList<Symptom>();
-			
-			ResultSet rs = state.executeQuery("select S.id, S.name Sname\n" + 
-					"from Ingredient I inner join I_S IS on (I.id = IS.ingredientID)\n" + 
-					"inner join Symptom S on (IS.symptomID = S.id)\n" +  
-					"where I.id = "+iId+";");
-			
-			while(rs.next()) {
-				Symptom symptom = new Symptom(rs.getInt(1), rs.getString(2));
-				result.add(symptom);
-			}
-			
-			return result;
+			stmt = "select I.id, I.name, I.eat\n" + 
+					"from Symptom S\n" + 
+					"inner join I_S on (S.id = I_S.symptomID)\n" + 
+					"inner join Ingredient I on (I_S.ingredientID = I.id)\n" + 
+					"where S.name LIKE '%"+symptomName+"%';";
+//			p = connect.prepareStatement(stmt);
+//			p.setString(1, symptomName);
+			ResultSet rs = state.executeQuery(stmt);
+			return rs;
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
-	
-	public ArrayList<Ingredient> symptomToingredient(int sId){
+	public ArrayList<Hospital> searchHospitalAddress(String address){
+	      try {
+	         ArrayList<Hospital> result = new ArrayList<Hospital>();
+	         
+	         ResultSet rs = state.executeQuery("select H.id, H.name, H.address, H.phone from Hospital H where H.address LIKE '%" + address + "%'");
+	         while(rs.next()) {
+	            Hospital hospital = new Hospital(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4));
+	            result.add(hospital);
+	         }
+	         
+	         return result;
+	      } catch (Exception e) {
+	         e.printStackTrace();
+	         return null;
+	      }
+	   }
+	public ResultSet ingredientDetail(int iId) {
 		try {
-			ArrayList<Ingredient> result = new ArrayList<Ingredient>();
-			
-			ResultSet rs = state.executeQuery("select I.id, I.name Iname, I.explain, I.eat\n" + 
-					"from Symptom S inner join I_S IS on (S.id = IS.symptomID)\n" + 
-					"inner join Ingredient I on (IS.ingredientID = I.id)\n" +  
-					"where S.id = "+sId+";");
-			
-			while(rs.next()) {
-				Ingredient ingredient = new Ingredient(rs.getInt(1), rs.getString(2), rs.getInt(3), rs.getString(4));
-				result.add(ingredient);
-			}
-			
-			return result;
+			stmt = "select I.name, I.explain, I.eat, S.name\n" + 
+					"from Ingredient I\n" + 
+					"inner join I_S on (I.id = I_S.ingredientID)\n" + 
+					"inner join Symptom S on (I_S.symptomID = S.id)\n" + 
+					"where I.id = ?;";
+			p = connect.prepareStatement(stmt);
+			p.setInt(1, iId);
+			ResultSet rs = p.executeQuery();
+
+			return rs;
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -214,7 +284,7 @@ public class SQLCommand {
 	            + "nutrition varchar(20), imageURL varchar(100), primary key(id));");
 
 	      createlist.add("create table Ingredient(id SERIAL NOT NULL, name varchar(20) NOT NULL UNIQUE, "
-	            + "eat smallint CHECK (eat = 1 or eat = 2 or eat = 3), explain varchar(100), "
+	            + "eat smallint CHECK (eat = 1 or eat = 2 or eat = 3), explain varchar(10000), "
 	            + "primary key(id));");
 
 	      createlist.add("create table Symptom(id SERIAL NOT NULL, name varchar(20) NOT NULL UNIQUE, " + 
@@ -242,7 +312,7 @@ public class SQLCommand {
 	   }
 
 
-	   private static void insertDefaultTable(Statement stt, Connection conn) {
+	   private void insertDefaultTable(Statement stt, Connection conn) {
 	      ArrayList<String> symptom_list = initSymptomList();
 
 	      String q = new String();
@@ -256,13 +326,89 @@ public class SQLCommand {
 
 	            query.executeUpdate();
 	         }
+	         insertDefaultIngredientTable(stt,conn);
+	         insertDefaultI_STable(stt,conn);
 	      } catch (Exception ex) {
 
 	      }
 	      
+	      setTriggerI_STable(stt,conn);
+	      
 	   }
 
-	   static public StringBuilder sendAPI() {
+	   private void insertDefaultI_STable(Statement stt, Connection conn) throws SQLException, NumberFormatException, IOException {
+		   String[] parsing;
+           stmt = "insert into I_S(ingredientId,symptomID) values(?, ?);";
+           p = connect.prepareStatement(stmt);
+		   
+		   File file2 = new File("I_S.txt");
+           //입력 스트림 생성
+           FileReader filereader2 = new FileReader(file2);
+           //입력 버퍼 생성
+           BufferedReader bufReader2 = new BufferedReader(filereader2);
+           p.clearParameters();
+           
+           String line2 = "";
+           
+           while((line2 = bufReader2.readLine()) != null){
+               parsing = line2.split(" ");
+
+                 p.setInt(1, Integer.parseInt(parsing[0]));
+                 p.setInt(2, Integer.parseInt(parsing[1]));
+                 p.executeUpdate();
+           }
+           //.readLine()은 끝에 개행문자를 읽지 않는다.            
+           bufReader2.close();
+	   }
+	private void insertDefaultIngredientTable(Statement stt, Connection conn) throws SQLException, NumberFormatException, IOException {
+		   String[] parsing;
+		   stmt = "insert into Ingredient(name, eat, explain) values(?, ?, ?) on conflict (name) do nothing";
+		   p = connect.prepareStatement(stmt);
+		   
+		   File file = new File("ingredient.txt");
+           //입력 스트림 생성
+           FileReader filereader = new FileReader(file);
+           //입력 버퍼 생성
+           BufferedReader bufReader = new BufferedReader(filereader);
+           String line = "";
+
+           while((line = bufReader.readLine()) != null){
+               parsing = line.split("\t");
+               p.setString(1, parsing[0]);
+               p.setInt(2, Integer.parseInt(parsing[1]));
+               p.setString(3, parsing[2]);
+               p.executeUpdate();
+           }
+           //.readLine()은 끝에 개행문자를 읽지 않는다.            
+           bufReader.close();
+	}
+	private static void setTriggerI_STable(Statement stt, Connection conn) {
+		   try {
+		   String trigger_func = 
+				   "create or replace function before_insert_I_S()\n" +
+				   "returns trigger as $before_insert_I_S$\n" +
+				    "begin\n" +
+				     "if exists(select * from I_S " +
+				        "where ingredientID=new.ingredientID and symptomID=new.symptomID) then\n" + 
+				         "return null;\n" +
+				     "else\n" +
+				         "return new;\n" +
+				     "end if;\n"+
+				   "end;\n $before_insert_I_S$ language 'plpgsql';";
+		   String create_trigger =
+				    "create trigger t1\n" +
+					"before insert on I_S\n" +
+				    "for each row\n" +
+					"execute procedure before_insert_I_S();";
+		   
+		   
+		   stt.executeUpdate(trigger_func);
+		   stt.executeUpdate(create_trigger);
+		   } catch(Exception e) {
+			   
+		   }
+	}
+	static public StringBuilder sendAPI() {
 	      StringBuilder urlBuilder = new StringBuilder(
 	            "http://apis.data.go.kr/B553748/CertImgListService/getCertImgListService"); /* URL */
 	      StringBuilder sb = new StringBuilder();
@@ -350,9 +496,7 @@ public class SQLCommand {
 
 	         }
 	         StringBuilder api_res_hospital = sendAPIHospital();
-	         System.out.println(api_res_hospital);
 	         insertHospital(api_res_hospital,connect);
-	         System.out.println(api_res.toString());
 
 	      } catch (Exception ex) {
 	         System.out.println(ex);
@@ -444,7 +588,6 @@ public class SQLCommand {
 
 	   private static ArrayList<Integer> getIngredientId(String g, Connection conn) {
 	      Set<String> igd_txt = deleteBracketText(g);
-	      System.out.println(igd_txt);
 	      ArrayList<Integer> i_id_list = new ArrayList();
 
 	      String q = new String();
@@ -572,7 +715,7 @@ public class SQLCommand {
 		      HttpURLConnection conn;
 		      try {
 		         urlBuilder.append("?" + URLEncoder.encode("KEY", "MS949")
-		               + "=981ffd3aea3f459aa28449256aaf20f8&Type=xml"); /* * Service
+		               + "=981ffd3aea3f459aa28449256aaf20f8&Type=xml&pSize=1000"); /* * Service
 		                                                * Key
 		                                             */
 
@@ -612,7 +755,6 @@ public class SQLCommand {
 		      // XPathExpression expr = xpath.compile("/response/body/items/item");
 		      XPathExpression expr = xpath.compile("//row");
 		      NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-
 		      for (int i = 0; i < nodeList.getLength(); i++) {
 		         Element child = (Element) nodeList.item(i);
 
@@ -622,7 +764,7 @@ public class SQLCommand {
 
 		         NodeList phone = child.getElementsByTagName("ENTRPS_TELNO");
 		         Element phn = (Element) phone.item(0);
-		         String phn_num = phn.getFirstChild().getNodeValue();
+		         String phn_num = phn.getFirstChild() == null ? "" : phn.getFirstChild().getNodeValue();
 
 		         NodeList address = child.getElementsByTagName("REFINE_ROADNM_ADDR");
 		         Element adr = (Element) address.item(0);
@@ -640,7 +782,7 @@ public class SQLCommand {
 		         query.executeUpdate();
 		      }
 		      }catch(Exception e) {
-		         
+		         e.printStackTrace();
 		      }
 		   }
 }

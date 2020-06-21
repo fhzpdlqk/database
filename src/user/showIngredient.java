@@ -8,80 +8,56 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.Button;
 import java.awt.event.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.awt.Image;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 import main.SQLCommand;
 import main.FirstPage;
 import model.Ingredient;
-import model.Product;
 import model.Symptom;
 
-public class showProduct extends Frame{
-	
-	private Product product;
+public class showIngredient extends Frame{
+
+	private Symptom symptom;
 	private ArrayList<String> symptomArray;
-	private SQLCommand query = new SQLCommand();
-	private IngredientS ingredientS = new IngredientS("","",0);
+	private Ingredient ingredient;
+	private IngredientS ingredientS = new IngredientS("","",0);;
 	private ResultSet rs;
-	
+	private SQLCommand query = new SQLCommand();
+
 	Button home;
 	Button hospital;
-	
-	public showProduct(String productName) throws SQLException, IOException{
+
+	public showIngredient(String ingredientName) throws SQLException {
 		super();
-		this.product = query.equalProduct(productName);
+		this.ingredient = query.equalIngredient(ingredientName);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent we) {
 				System.exit(0);
 			}
 		});
-		
 		Panel p = new Panel();
-		p.setLayout(new BoxLayout(p,BoxLayout.Y_AXIS));
-		
+		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+
 		Panel p1 = new Panel();
-		Label title = new Label(product.getName(), Label.CENTER);
+		Label title = new Label(ingredient.getName(), Label.CENTER);
+
 		p1.add(title);
 		p.add(p1);
-		
-		try {
-			Panel p2 = new Panel();
-			
-			Image image;
-			URL url = new URL(product.getImgURL());
-			image = ImageIO.read(url);
-			
-			JLabel img = new JLabel(new ImageIcon(image));
-			
-			p2.add(img);
-			p.add(p2);
-		}catch(MalformedURLException ex) {
-			ex.printStackTrace();
-		}
-		
-		Panel p3 = new Panel();
-		TextArea contents = new TextArea("재료:\n", 30, 50);
-		rs = query.productDetail(product.getId());
-		
+
+		Panel p2 = new Panel();
+		TextArea contents = new TextArea(50, 50);
+		rs = query.ingredientDetail(ingredient.getId());
+
 		while(rs.next()) {
 
 			if(rs.getString(1).equals(ingredientS.getIname())) {
 				ingredientS.setSname(rs.getString(4));
 			}else {
 				if(!ingredientS.getIname().equals("")) {
-
-					contents.append(ingredientS.getIname()+"\n");
 
 					if(ingredientS.getExplain() != null && !ingredientS.getExplain().equals("")) {
 						contents.append("-설명: "+ingredientS.getExplain()+"\n");
@@ -106,8 +82,6 @@ public class showProduct extends Frame{
 			}
 		}
 		
-		contents.append(ingredientS.getIname()+"\n");
-
 		if(ingredientS.getExplain() != null && !ingredientS.getExplain().equals("")) {
 			contents.append("-설명: "+ingredientS.getExplain()+"\n");
 			symptomArray = ingredientS.getSname();
@@ -126,25 +100,24 @@ public class showProduct extends Frame{
 				contents.append("-위험도: 상\n");
 			}
 		}
-		
-		p3.add(contents);
-		p.add(p3);
-		
-		Panel p4 = new Panel(new GridLayout(1, 2, 10, 10));
+		p2.add(contents);
+		p.add(p2);
+
+		Panel p3 = new Panel(new GridLayout(1, 2, 10, 10));
 		home = new Button("홈");
 		hospital = new Button("병원찾기");
-		home.addActionListener(new EventHandler());
 		hospital.addActionListener(new EventHandler());
-		p4.add(home);
-		p4.add(hospital);
-		p.add(p4);
-		
+		home.addActionListener(new EventHandler());
+		p3.add(home);
+		p3.add(hospital);
+		p.add(p3);
+
 		add(p);
-		
-		setSize(500, 1000);
+
+		setSize(500, 600);
 		setVisible(true);
 	}
-	
+
 	class EventHandler implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
